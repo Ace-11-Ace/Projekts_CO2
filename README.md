@@ -20,7 +20,7 @@ Programma parāda CO2 līmeni ppm. Krāsu kodējums: zaļš (420-1000 ppm - labs
 app.py - galvenais Flask fails ar API un datu apstrādi. CO2.csv - datu fails ar visiem mērījumiem (125 ieraksti, 25 telpas, 5 dienas). templates/index.html - izvēlnes lapa. templates/chart.html - grafika lapa ar Chart.js. templates/data.html - datu un statistikas lapa.
 
 ## Licence
-Šis projekts ir izstrādāts izglītības nolūkiem Daugavpils Tehnoloģiju vidusskolā - licejā. Programmu drīkst brīvi izmantot, modificēt un izplatīt izglītības iestādēs. Autori: Nikita Semjonovs, Antons Zils, Kirills Božkovs.
+MIT License. Šo programmu drīkst brīvi izmantot, kopēt, modificēt, apvienot, publicēt, izplatīt un pārdot bez ierobežojumiem. Viss, kas jādara, ir jāsaglabā oriģinālā autortiesību paziņojums. Programma tiek piedāvāta "kā ir" bez jebkādām garantijām.
 
 ## Piemēri
 Pievienojot jaunu rindu CO2.csv: "126,4500,6,101.kab,Daugavpils Tehnoloģiju vidusskola - licejs,23.5,45", programma rādīs šo mērījumu ar tumši sarkanu krāsu (ļoti bīstams). Izvēloties kabinetu "101.kab" grafikā, var redzēt tā CO2 līmeni pa visām dienām. Izmantojot filtrus datu lapā, var atlasīt tikai "115.kab" datus par dienu 3.
