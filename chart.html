@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CO2 Grafiks</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .back-btn:hover {
+            background: #764ba2;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            height: 500px;
+        }
+        .controls {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 20px;
+        }
+        .controls select {
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            min-width: 250px;
+            background: white;
+        }
+        .controls button {
+            padding: 10px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+        .controls button:hover {
+            background: #764ba2;
+        }
+        .room-stats {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        .room-stats h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        .stat-label {
+            font-size: 0.8em;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .legend {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← Atpakaļ uz izvēlni</a>
+        <h1>📈 CO2 Līmeņa Grafiks</h1>
+        
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background:#27ae60;"></div> Labs (420-1000 ppm)</div>
+            <div class="legend-item"><div class="legend-color" style="background:#f39c12;"></div> Pasliktinās (1000-2000 ppm)</div>
+            <div class="legend-item"><div class="legend-color" style="background:#e67e22;"></div> Būtiski pasliktinājusies (2000-3000 ppm)</div>
+            <div class="legend-item"><div class="legend-color" style="background:#e74c3c;"></div> Bīstams (>3000 ppm)</div>
+            <div class="legend-item"><div class="legend-color" style="background:#8b0000;"></div> Ļoti bīstams (>4000 ppm)</div>
+            <div class="legend-item"><div class="legend-color" style="background:#000000;"></div> Kritisks (>5000 ppm)</div>
+        </div>
+        
+        <div class="controls">
+            <select id="roomSelect">
+                <option value="all">-- Visas telpas (vidējais) --</option>
+            </select>
+            <button onclick="updateChart()">Atjaunināt grafiku</button>
+        </div>
+
+        <div id="roomStats" class="room-stats">
+            <h3>📊 Telpas statistika</h3>
+            <div class="stats-grid" id="roomStatsGrid"></div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="co2Chart"></canvas>
+        </div>
+
+        <div class="footer">
+            <p>Daugavpils Tehnoloģiju vidusskola - licejs | CO2 monitoringa sistēma</p>
+            <p style="font-size:0.8em; margin-top:5px;">420 ppm - svaiga gaisa CO2 līmenis</p>
+        </div>
+    </div>
+
+    <script>
+        let allData = [];
+        let chart = null;
+
+        function getColorForCO2(co2) {
+            if (co2 >= 5000) return '#000000';
+            if (co2 >= 4000) return '#8b0000';
+            if (co2 >= 3000) return '#e74c3c';
+            if (co2 >= 2000) return '#e67e22';
+            if (co2 >= 1000) return '#f39c12';
+            return '#27ae60';
+        }
+
+        function getStatusText(co2) {
+            if (co2 >= 5000) return 'Kritisks (>5000 ppm)';
+            if (co2 >= 4000) return 'Ļoti bīstams (>4000 ppm)';
+            if (co2 >= 3000) return 'Bīstams (>3000 ppm)';
+            if (co2 >= 2000) return 'Būtiski pasliktinājusies (2000-3000 ppm)';
+            if (co2 >= 1000) return 'Pasliktinās (1000-2000 ppm)';
+            return 'Labs (420-1000 ppm)';
+        }
+
+        async function loadData() {
+            const response = await fetch('/api/data');
+            allData = await response.json();
+            
+            const rooms = [...new Set(allData.map(item => item.device).filter(d => d))];
+            const roomSelect = document.getElementById('roomSelect');
+            rooms.forEach(room => {
+                const option = document.createElement('option');
+                option.value = room;
+                option.textContent = room;
+                roomSelect.appendChild(option);
+            });
+            
+            updateChart();
+        }
+
+        async function updateChart() {
+            const selectedRoom = document.getElementById('roomSelect').value;
+            const statsDiv = document.getElementById('roomStats');
+            const statsGrid = document.getElementById('roomStatsGrid');
+            
+            let days = [...new Set(allData.map(item => item.day))];
+            days.sort((a,b) => a-b);
+            
+            let co2Values;
+            let chartLabel;
+            
+            if (selectedRoom === 'all') {
+                // Vidējais CO2 pa dienām visām telpām
+                co2Values = days.map(day => {
+                    const dayData = allData.filter(item => item.day === day);
+                    const avg = dayData.reduce((sum, item) => sum + item.co2, 0) / dayData.length;
+                    return avg;
+                });
+                chartLabel = 'Vidējais CO₂ līmenis (visas telpas)';
+                statsDiv.style.display = 'none';
+            } else {
+                // Konkrētas telpas dati
+                const roomData = allData.filter(item => item.device === selectedRoom);
+                co2Values = days.map(day => {
+                    const dayItem = roomData.find(item => item.day === day);
+                    return dayItem ? dayItem.co2 : null;
+                });
+                chartLabel = `${selectedRoom} - CO₂ līmenis`;
+                
+                // Parāda telpas statistiku
+                const avgCO2 = roomData.reduce((sum, item) => sum + item.co2, 0) / roomData.length;
+                const minCO2 = Math.min(...roomData.map(item => item.co2));
+                const maxCO2 = Math.max(...roomData.map(item => item.co2));
+                
+                statsGrid.innerHTML = `
+                    <div class="stat-item">
+                        <div class="stat-value" style="color:${getColorForCO2(avgCO2)}">${avgCO2.toFixed(0)} ppm</div>
+                        <div class="stat-label">Vidējais CO₂</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${minCO2.toFixed(0)} ppm</div>
+                        <div class="stat-label">Minimālais CO₂</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${maxCO2.toFixed(0)} ppm</div>
+                        <div class="stat-label">Maksimālais CO₂</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${roomData.length}</div>
+                        <div class="stat-label">Mērījumu skaits</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" style="font-size:1.2em">${getStatusText(avgCO2)}</div>
+                        <div class="stat-label">Kvalitātes novērtējums</div>
+                    </div>
+                `;
+                statsDiv.style.display = 'block';
+            }
+            
+            const pointColors = co2Values.map(value => {
+                if (!value) return '#ccc';
+                return getColorForCO2(value);
+            });
+            
+            // Segmentu krāsas līnijai
+            const validValues = co2Values.filter(v => v !== null);
+            const segmentColors = [];
+            for (let i = 0; i < co2Values.length - 1; i++) {
+                if (co2Values[i] !== null && co2Values[i+1] !== null) {
+                    const avgCo2 = (co2Values[i] + co2Values[i+1]) / 2;
+                    segmentColors.push(getColorForCO2(avgCo2));
+                } else {
+                    segmentColors.push('#ccc');
+                }
+            }
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            const ctx = document.getElementById('co2Chart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: days.map(d => `Diena ${d}`),
+                    datasets: [{
+                        label: chartLabel,
+                        data: co2Values,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.1,
+                        pointBackgroundColor: pointColors,
+                        pointBorderColor: pointColors,
+                        pointRadius: 6,
+                        pointHoverRadius: 10,
+                        borderWidth: 2,
+                        segment: {
+                            borderColor: ctx => {
+                                const index = ctx.p0DataIndex;
+                                if (index < segmentColors.length && co2Values[index] !== null && co2Values[index+1] !== null) {
+                                    return segmentColors[index];
+                                }
+                                return '#ccc';
+                            }
+                        }
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.parsed.y === null) return 'Nav datu';
+                                    return `CO₂: ${context.parsed.y.toFixed(0)} ppm`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Diena' }
+                        },
+                        y: {
+                            title: { display: true, text: 'CO₂ Līmenis (ppm)' },
+                            beginAtZero: false,
+                            grid: {
+                                color: function(context) {
+                                    const value = context.tick.value;
+                                    if (value >= 5000) return '#00000040';
+                                    if (value >= 4000) return '#8b000040';
+                                    if (value >= 3000) return '#e74c3c40';
+                                    if (value >= 2000) return '#e67e2240';
+                                    if (value >= 1000) return '#f39c1240';
+                                    return '#27ae6040';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

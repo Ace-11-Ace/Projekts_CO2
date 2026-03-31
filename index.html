@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CO2 Monitoringa Sistēma</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+        h1 {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2em;
+            margin-bottom: 50px;
+        }
+        .menu {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .menu-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 280px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        .menu-card h2 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        .menu-card p {
+            color: #666;
+            line-height: 1.5;
+        }
+        @media (max-width: 768px) {
+            .menu { gap: 20px; }
+            .menu-card { width: 250px; padding: 30px; }
+            h1 { font-size: 2em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 CO2 Monitoringa Sistēma</h1>
+        <div class="subtitle">Daugavpils Tehnoloģiju vidusskola - licejs</div>
+        
+        <div class="menu">
+            <a href="/chart" class="menu-card">
+                <div class="icon">📈</div>
+                <h2>Grafiks</h2>
+                <p>Skatīt CO2 līmeņa grafiku pa dienām</p>
+            </a>
+            
+            <a href="/data" class="menu-card">
+                <div class="icon">📊</div>
+                <h2>Dati</h2>
+                <p>Skatīt visus mērījumu datus un statistiku</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
