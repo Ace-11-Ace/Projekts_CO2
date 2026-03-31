@@ -1,5 +1,4 @@
 # Projekts_CO2
-# CO2 Monitoringa Sistēma
 
 ## Programmas nosaukums
 CO2 Monitoringa Sistēma - tīmekļa lietotne gaisa kvalitātes kontrolei Daugavpils Tehnoloģiju vidusskolā - licejā.
