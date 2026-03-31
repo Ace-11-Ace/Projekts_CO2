@@ -8,7 +8,7 @@ CO2 Monitoringa Sistēma - tīmekļa lietotne gaisa kvalitātes kontrolei Daugav
 2. Instalē Flask bibliotēku, atverot komandu rindu (CMD) un ierakstot: pip install flask
 3. Lejupielādē visus projekta failus vienā mapē (app.py, CO2.csv, un templates mapi ar index.html, chart.html, data.html)
 4. Atver komandu rindu mapē ar failiem un ieraksti: python app.py
-5. Atver pārlūkprogrammu un ievadi adresi: http://localhost:5000
+5. Atver pārlūkprogrammu un ievadi adresi: http://127.0.0.1:5000
 
 ## Kā izmantot programmu
 Dati atrodas failā CO2.csv ar kolonnām: id, CO2 vērtība (ppm), diena, kabinets, lokācija, temperatūra, mitrums. Piemērs: 1,587,1,10.kab,Daugavpils Tehnoloģiju vidusskola - licejs,17.6,46. Sākuma lapā izvēlies "Grafiks" vai "Dati". Grafika lapā izvēlies kabinetu un nospied "Atjaunināt grafiku". Datu lapā nospied "Parādīt visus datus" vai izmanto filtrus pēc kabineta/dienas.
