@@ -16,6 +16,10 @@ Dati atrodas failā CO2.csv ar kolonnām: id, CO2 vērtība (ppm), diena, kabine
 ## Sagaidāmā izvade
 Programma parāda CO2 līmeni ppm. Krāsu kodējums: zaļš (420-1000 ppm - labs), dzeltens (1000-2000 ppm - pasliktinās), oranžs (2000-3000 ppm - būtiski pasliktinājusies), sarkans (3000-4000 ppm - bīstams), tumši sarkans (4000-5000 ppm - ļoti bīstams), melns (>5000 ppm - kritisks). Datu lapā redzama tabula ar visiem mērījumiem un statistikas kartes. Grafikā redzams līniju grafiks pa dienām.
 
+## Diagramma
+<img width="1009" height="300" alt="image" src="https://github.com/user-attachments/assets/907da1f0-75bd-484a-99d0-bbbb0b470121" />
+
+
 ## Galvenie faili
 app.py - galvenais Flask fails ar API un datu apstrādi. CO2.csv - datu fails ar visiem mērījumiem (125 ieraksti, 25 telpas, 5 dienas). templates/index.html - izvēlnes lapa. templates/chart.html - grafika lapa ar Chart.js. templates/data.html - datu un statistikas lapa.
 
